@@ -1,0 +1,99 @@
+{
+    // --- Python: интерпретатор и окружение проекта ---
+    // Подправь путь под свой layout (.venv / venv / env)
+    "python.defaultInterpreterPath": ".venv/Scripts/python.exe",
+
+    // Тесты
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+
+    // --- Python: форматирование и линтинг ---
+    "[python]": {
+        "editor.defaultFormatter": "mikoz.black-py",
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports.ruff": "explicit",
+            "source.fixAll.ruff": "explicit"
+        }
+    },
+    "ruff.organizeImports": true,
+    "ruff.lint.enable": true,
+    "python.analysis.typeCheckingMode": "basic",
+
+    // Чуть более строгий workspace-стиль
+    "editor.rulers": [88],                     // например, под Black/PEP8
+    "editor.wordWrap": "off",
+
+    // --- Jupyter в рамках проекта ---
+    "jupyter.askForKernelRestart": false,
+    "jupyter.interactiveWindow.creationMode": "single",
+    "jupyter.interactiveWindow.textEditor.executeSelection": true,
+    "notebook.lineNumbers": "on",
+
+    // --- JSON: конфиги проекта ---
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "config.json",
+                "*/config/*.json",
+                "**/configs/*.json"
+            ],
+            "url": "./schemas/config.schema.json"
+        }
+    ],
+
+    // --- Комфорт внутри проекта ---
+
+    // Локальное поведение подсветки
+    "editor.selectionHighlight": true,
+    "editor.occurrencesHighlight": "singleFile",
+    "editor.hover.enabled": "on",
+
+    // Хвосты и финальные строки — строгий репо-режим
+    "files.trimTrailingWhitespace": true,
+    "files.trimFinalNewlines": true,
+    "files.insertFinalNewline": true,
+
+    // Чуть более чистый Explorer и поиск именно в этом проекте
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.mypy_cache": true,
+        "**/.pytest_cache": true
+    },
+    "search.exclude": {
+        "**/__pycache__": true,
+        "**/.mypy_cache": true,
+        "**/.pytest_cache": true,
+        "**/.venv": true
+    },
+
+    // --- Git / диффы именно в этом репо ---
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+
+    // --- Ошибки / подсветка внутри проекта ---
+    "errorLens.enabled": true,
+    "errorLens.messageMaxChars": 80,
+    "errorLens.excludeByMessage": [
+        "markdown",
+        "plaintext"
+    ],
+
+    // --- JS/HTML, если слегка задеваешь фронт в этом репо ---
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    }
+}
