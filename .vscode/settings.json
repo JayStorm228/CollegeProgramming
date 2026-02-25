@@ -1,6 +1,5 @@
 {
     // --- Python: интерпретатор и окружение проекта ---
-    // Подправь путь под свой layout (.venv / venv / env)
     "python.defaultInterpreterPath": ".venv/Scripts/python.exe",
 
     // Тесты
@@ -95,5 +94,12 @@
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
-    }
+    },
+    "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on",
+    "files.trimTrailingWhitespace": false
+},
+
 }
