@@ -3,8 +3,10 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-toolsai.jupyter",
-        "ms-python.black-formatter",
+        "mikoz.black-py",
         "astral-sh.ruff",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "yatki.vscode-surround",
+        "usernamehw.errorlens"
     ]
 }
