@@ -1,12 +1,12 @@
 {
-    "recommendations": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-toolsai.jupyter",
-        "mikoz.black-py",
-        "astral-sh.ruff",
-        "esbenp.prettier-vscode",
-        "yatki.vscode-surround",
-        "usernamehw.errorlens"
-    ]
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-toolsai.jupyter",
+    "ms-python.black-formatter",
+    "astral-sh.ruff",
+    "esbenp.prettier-vscode",
+    "yatki.vscode-surround",
+    "usernamehw.errorlens"
+  ]
 }
