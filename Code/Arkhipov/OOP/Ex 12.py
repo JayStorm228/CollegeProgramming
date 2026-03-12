@@ -328,7 +328,7 @@ class Polygon:
             f"    Полигон ({len(self.vertices)} вершин):\n"
             f"      Площадь: {self.Area:.2f}\n"
             f"      Периметр: {self.perimeter:.2f}\n"
-            f"      Вершины: {self.vertices.shape[0]}×3"
+            f"      Вершины: \n{self.vertices}"
         )
 
 

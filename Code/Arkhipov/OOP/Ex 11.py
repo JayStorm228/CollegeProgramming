@@ -27,7 +27,7 @@ class Toy(ABC):
 
     @abstractmethod
     def __str__(self) -> str: ...
-    def match_color(self, color) -> bool:
+    def match_color(self, color: str) -> bool:
         return self.Color == color
 
     def __post_init__(self) -> None:

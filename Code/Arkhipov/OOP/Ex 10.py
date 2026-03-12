@@ -145,7 +145,7 @@ Transport: Auto {self.Mark!r}
 
 def main() -> None:
     # Конфигурация запуска
-    WaitDelay = 0.7
+    WaitDelay = 0
     MapSize: dict[str, int] = {"x": r.randint(10, 15), "y": r.randint(10, 15)}
     data: dict[str, list[str]] = json.loads(DataPath.read_text(encoding=encoding))
     VehicleFactories: dict[int, Callable[[dict[str, list[str]]], Vehicle]] = {
