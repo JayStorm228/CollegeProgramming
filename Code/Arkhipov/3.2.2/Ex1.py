@@ -28,16 +28,17 @@ SymbolsCount: dict[str, int] = {
     "oo": text.count("oo") + text.count("оо"),
     "kk": text.count("kk") + text.count("кк"),
 }
-chars: str = "aokаок"
 NewText: str = re.sub(r"(.)\1{1}", r"\1", text)
-
+NewText_name = "Ex1NEW.txt"
+NewText_path = CWD / "output" / NewText_name
+NewText_path.write_text(NewText, encoding=encoding)
 print(
     f"""
-Исходный текст: \n{text}
-Количество повторяемых символов:
+Original text: \n{text}
+Repeated symbol combos:
     аа: {SymbolsCount['aa']}
     оо: {SymbolsCount['oo']}
     kk: {SymbolsCount['kk']}
-Изменённый текст: \n{NewText}
-"""
+Redacted text: \n{NewText}
+""".strip()
 )

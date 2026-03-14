@@ -20,16 +20,15 @@ for _ in range(Length):
 Text_path.write_text(", ".join(GeneratedSequence), encoding=encoding)
 
 text = Text_path.read_text(encoding=encoding)
-Words: list[str] = text.split()
-Words = [_.translate(str.maketrans("", "", string.punctuation)) for _ in Words]
+Words = [_.translate(str.maketrans("", "", string.punctuation)) for _ in text.split()]
 LenWords: list[int] = [len(_) for _ in Words]
 MaxLenWord: int = max(LenWords)
 MinLenWord: int = min(LenWords)
 
 print(
     f"""
-Информация в текстовом файле: \n{text}\n
-Самое длинное слово: {MinLenWord}
-Самое короткое слово: {MaxLenWord}
+Original text: \n{text}\n
+Longest word len: {MinLenWord}
+Shortest word len: {MaxLenWord}
 """
 )

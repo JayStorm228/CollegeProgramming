@@ -20,13 +20,13 @@ for _ in range(Length):
 Text_path.write_text(", ".join(GeneratedSequence), encoding=encoding)
 
 
-text = Text_path.read_text(encoding=encoding)
+text: str = Text_path.read_text(encoding=encoding)
 words: list[str] = text.split()
 LenWords: int = len(words)
 
 print(
     f"""
-Исходное предложение: \n{text}
-Количество слов: {LenWords}
+Original text: \n{text}
+Words amount: {LenWords}
 """
 )
