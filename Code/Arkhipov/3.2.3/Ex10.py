@@ -21,11 +21,9 @@ for _ in range(Length):
 Text_path.write_text(", ".join(GeneratedSequence), encoding=encoding)
 
 # Решение задачи
-with Text_path.open("r", encoding=encoding) as f:
-    text: str = f.read()
-    translator = str.maketrans("", "", string.punctuation)
-    text_nopunct = str.translate(text, translator)
-    Words: list[str] = text_nopunct.split()
+text: str = Text_path.read_text(encoding=encoding)
+translator = str.maketrans("", "", string.punctuation)
+Words: list[str] = str.translate(text, translator).split()
 
 Palindromes: list[str] = ["".join(word[::-1]) for word in Words]
 NewText: str = ", ".join(Palindromes)
@@ -35,7 +33,7 @@ NewText_path.write_text(NewText, encoding=encoding)
 
 print(
     f"""
-Original text: \n{Text_path.read_text(encoding=encoding)}\n
+Original text: \n{text}\n
 Remade text: \n{NewText}
     """.strip()
 )

@@ -28,15 +28,12 @@ NewText: str = "".join([ReplaceByLetter if w == SearchedLetter else w for w in t
 
 NewText_name = "Ex9NEW.txt"
 Newtext_path: Path = CWD / "output" / NewText_name
-
-with Newtext_path.open("w", encoding=encoding) as f:
-    f.writelines(NewText + "\n")
+Newtext_path.write_text(NewText, encoding=encoding)
 print(
     f"""
 Original text: \n{text}
 Letter to be replaced: {SearchedLetter}
 Letter to replace with: {ReplaceByLetter}
 Replaced {text.count(SearchedLetter)}: \n{NewText}
-
     """.strip()
 )

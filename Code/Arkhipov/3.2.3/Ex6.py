@@ -16,9 +16,7 @@ with Text_path.open("w", encoding=encoding) as f:
     f.write(GeneratedSequence)
 
 # Решение задачи
-with Text_path.open("r", encoding=encoding) as f:
-    text: str = f.read()
-
+text: str = Text_path.read_text(encoding=encoding)
 PlusCount: int = text.count("+")
 MinusCount: int = text.count("-")
 AsteriskCount: int = text.count("*")
