@@ -77,7 +77,7 @@
     "**/.venv": true
   },
 
-  // --- Git / диффы именно в этом репо ---
+  // --- Git  ---
   "git.autofetch": true,
   "git.enableSmartCommit": true,
   "git.confirmSync": false,
@@ -88,7 +88,7 @@
   "errorLens.messageMaxChars": 80,
   "errorLens.excludeByMessage": ["markdown", "plaintext"],
 
-  // --- JS/HTML, если слегка задеваешь фронт в этом репо ---
+  // --- JS/HTML ---
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
