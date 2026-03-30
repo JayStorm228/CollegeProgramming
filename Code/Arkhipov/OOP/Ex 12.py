@@ -261,7 +261,7 @@ class Polygon:
         """
         # Берём первые 3 точки → плоскость
         A, B, C = self.vertices[:3]
-        normal: NDArray[np.float64] = np.cross(B - A, C - A)  # Нормаль плоскости
+        normal = np.cross(B - A, C - A)  # Нормаль плоскости
 
         # Проверяем остальные точки
         for i in range(3, len(self.vertices)):
@@ -291,14 +291,14 @@ class Polygon:
             площадь треугольника = 0.5 * || (P_i - P_{i-1}) × (P_{i+1} - P_{i-1}) ||
         - идём по всем вершинам i, суммируем площади соответствующих треугольников.
         """
-        S = 0.0
+        Area = 0.0
         n: int = len(self.vertices)
         for i in range(n):
             prev: NDArray[np.float64] = self.vertices[(i - 1) % n]
             curr: NDArray[np.float64] = self.vertices[i]
             next_: NDArray[np.float64] = self.vertices[(i + 1) % n]
-            S += 0.5 * np.linalg.norm(np.cross(curr - prev, next_ - prev))
-        return float(S)
+            Area += 0.5 * np.linalg.norm(np.cross(curr - prev, next_ - prev))
+        return float(Area)
 
     @property
     def perimeter(self) -> float:

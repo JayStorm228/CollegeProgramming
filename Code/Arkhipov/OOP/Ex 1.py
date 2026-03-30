@@ -2,7 +2,9 @@ import math as m
 import random as r
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, TypeAlias
+
+FigureFactory: TypeAlias = Callable[[], "Figure"]
 
 
 class Figure(ABC):
@@ -35,16 +37,16 @@ class Rect(Figure):
         return self._width
 
     @length.setter
-    def length(self, value) -> None:
+    def length(self, value: int | float) -> None:
         if value <= 0:
             raise ValueError("Length cannot be negative!")
-        self._length = value
+        self._length = float(value)
 
     @width.setter
-    def width(self, value) -> None:
+    def width(self, value: int | float) -> None:
         if value <= 0:
             raise ValueError("Width cannot be negative!")
-        self._width = value
+        self._width = float(value)
 
     @property
     def area(self) -> float:
@@ -59,8 +61,8 @@ class Rect(Figure):
 Rectangle
 Length: {self.length}
 Width: {self.width}
-Area: {self.area}
-Perimeter: {self.perimeter}
+Area: {self.area:.4f}
+Perimeter: {self.perimeter:.4f}
         """.strip()
 
 
@@ -76,7 +78,7 @@ class Circle(Figure):
         return self._radius
 
     @radius.setter
-    def radius(self, value) -> None:
+    def radius(self, value: int | float) -> None:
         if value <= 0:
             raise ValueError("Radius cannot be negative!")
         self._radius = value
@@ -93,8 +95,8 @@ class Circle(Figure):
         return f"""
 Circle
 Radius: {self._radius}
-Area: {self.area}
-Perimeter: {self.perimeter}
+Area: {self.area:.4f}
+Perimeter: {self.perimeter:.4f}
         """.strip()
 
 
@@ -121,8 +123,13 @@ class Triangle(Figure):
     @property
     def area(self) -> float:
         a, b, c = self._sides
-        s: float = (a + b + c) / 2
-        return (s * (s - a) * (s - b) * (s - c)) ** 0.5
+        half_perimeter: float = (a + b + c) / 2
+        return (
+            half_perimeter
+            * (half_perimeter - a)
+            * (half_perimeter - b)
+            * (half_perimeter - c)
+        ) ** 0.5
 
     @property
     def perimeter(self) -> float:
@@ -131,9 +138,9 @@ class Triangle(Figure):
     def __str__(self) -> str:
         return f"""
 Triangle
-Sides(a, b, c): {self._sides[0]}, {self._sides[1]}, {self._sides[2]}
-Area: {self.area}
-Perimeter: {self.perimeter}
+Sides(a, b, c): {', '.join(map(str, self.sides))}
+Area: {self.area:.4f}
+Perimeter: {self.perimeter:.4f}
         """.strip()
 
 
@@ -151,18 +158,19 @@ def random_triangle() -> Triangle:
 
 
 def main() -> None:
-    FigureFactors: dict[int, Callable[[], Figure]] = {
+    FigureFactories: dict[int, FigureFactory] = {
         1: lambda: Circle(r.randint(1, 10)),  # radius = random
         2: lambda: Rect(r.randint(1, 10), r.randint(1, 10)),
         3: lambda: random_triangle(),
     }
-    FiguresAmount: int = r.randint(1, 10)
-    print(f"Initializing {FiguresAmount} figures of {len(FigureFactors)} types")
+    FiguresAmount: int = r.randint(5, 10)
+    print(f"Initializing {FiguresAmount} figures of {len(FigureFactories)} types...\n")
     FiguresList: list[Figure] = [
-        FigureFactors[r.randint(1, len(FigureFactors))]() for _ in range(FiguresAmount)
+        FigureFactories[r.randint(1, len(FigureFactories))]()
+        for _ in range(FiguresAmount)
     ]
     for w in FiguresList:
-        print(w, end="\n\n")
+        print(f"{w}\n\n")
 
 
 if __name__ == "__main__":
