@@ -54,7 +54,11 @@ class Website(Edition):
     URL: str
     Annotation: str
 
+<<<<<<< HEAD:Code/Arkhipov/OOP/Ex 2.py
     def match_surname(self, surname: str) -> bool:
+=======
+    def match_surname(self, surname:str) -> bool:
+>>>>>>> e0ee5b8 (4.1.2 - 4.1.4 and small overall changes):Code/Arkhipov/4.1.2 - 4.1.4/Ex 2.py
         return self.AuthorSurname == surname
 
     def __str__(self) -> str:

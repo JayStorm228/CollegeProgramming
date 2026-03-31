@@ -112,7 +112,7 @@ class Triangle(Figure):
         return self._sides
 
     @sides.setter
-    def sides(self, value: tuple[float, float, float]):
+    def sides(self, value: tuple[float, float, float]) -> None:
         if len(value) != 3 or any(s <= 0 for s in value):
             raise ValueError(f"Invalid sides: {value} — each side must be > 0")
         a, b, c = sorted(value)

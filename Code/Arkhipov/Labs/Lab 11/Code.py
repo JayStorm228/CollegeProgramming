@@ -24,7 +24,7 @@ def create_triangle() -> tuple[float, float, float]:
 
 def median(a: float, b: float, c: float) -> float:
     if a <= 0 or b <= 0 or c <= 0:
-        raise ValueError(f"{a=}, {b=}, {c=}: Все стороны должны быть положительными: ")
+        raise ValueError(f"{a=}, {b=}, {c=}: Все стороны должны быть положительными")
     if a + b <= c or a + c <= b or b + c <= a:
         raise ValueError(f"{a=}, {b=}, {c=}: Неравенство треугольника не выполняется")
     return (2 * b**2 + 2 * c**2 - a**2) ** 0.5 / 2
