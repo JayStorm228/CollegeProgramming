@@ -3,56 +3,58 @@ import random as r
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, TypeAlias
 
 FileName = "Data.json"
 CWD: Path = Path(__file__).resolve().parent
 DataPath: Path = CWD / FileName
 encoding = "utf-8"
 
+EditionFactory: TypeAlias = Callable[[dict[str, list[str]]], "Edition"]
+
 
 @dataclass
 class Edition(ABC):
-    Title: str = ""
-    AuthorSurname: str = ""
+    Title: str
+    AuthorSurname: str
 
     @abstractmethod
     def __str__(self) -> str: ...
     @abstractmethod
-    def match_surname(self, surname) -> bool: ...
+    def match_surname(self, surname: str) -> bool: ...
 
 
 @dataclass
 class Book(Edition):
-    ReleaseYear: str = ""
-    Publisher: str = ""
+    ReleaseYear: str
+    Publisher: str
 
     def __str__(self) -> str:
         return f"Книга: '{self.Title}' ({self.AuthorSurname}, {self.ReleaseYear}, {self.Publisher})"
 
-    def match_surname(self, surname) -> bool:
+    def match_surname(self, surname: str) -> bool:
         return self.AuthorSurname == surname
 
 
 @dataclass
 class Article(Edition):
-    Magazine: str = ""
-    MagazineID: str = ""
-    ReleaseYear: str = ""
+    Magazine: str
+    MagazineID: str
+    ReleaseYear: str
 
     def __str__(self) -> str:
         return f"Статья: '{self.Title}' ({self.AuthorSurname}, Журнал: {self.Magazine}(№{self.MagazineID}, год издания: {self.ReleaseYear})"
 
-    def match_surname(self, surname) -> bool:
+    def match_surname(self, surname: str) -> bool:
         return self.AuthorSurname == surname
 
 
 @dataclass
 class Website(Edition):
-    URL: str = ""
-    Annotation: str = ""
+    URL: str
+    Annotation: str
 
-    def match_surname(self, surname) -> bool:
+    def match_surname(self, surname: str) -> bool:
         return self.AuthorSurname == surname
 
     def __str__(self) -> str:
@@ -61,7 +63,7 @@ class Website(Edition):
 
 def main() -> None:
     data: dict[str, list[str]] = json.loads(DataPath.read_text(encoding=encoding))
-    EditionFactories: dict[int, Callable[[dict[str, list[str]]], Edition]] = {
+    EditionFactories: dict[int, EditionFactory] = {
         1: lambda data: Book(
             Title=r.choice(data["Titles"]),
             AuthorSurname=r.choice(data["LastName"]),
@@ -90,7 +92,7 @@ def main() -> None:
     print(f"Initializing {EditionsAmount} editions of {len(EditionFactories)}")
     SearchedSurname: str = r.choice(data["LastName"])
     print(f"Searching for {SearchedSurname}")
-    output: List[Edition] = [
+    output: list[Edition] = [
         edition for edition in EditionsList if edition.match_surname(SearchedSurname)
     ]
     print(f"Found: {len(output)}")

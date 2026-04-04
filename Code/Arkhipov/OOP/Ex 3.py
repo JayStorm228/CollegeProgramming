@@ -1,14 +1,19 @@
 import random as r
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from math import cos, radians, sin
-from typing import Callable
+from typing import Callable, TypeAlias
+
+TriangleFactory: TypeAlias = Callable[[], "Triangle"]
 
 
+@dataclass
 class Triangle(ABC):
-    def __init__(self, side1: float, side2: float, angle_12: float) -> None:
-        self.Side1: float = side1
-        self.Side2: float = side2
-        self.Angle_12: float = angle_12
+    Side1: float
+    Side2: float
+    Angle_12: float
+
+    def __post_init__(self) -> None:
         self._validate_triangle()
 
     def _validate_triangle(self) -> None:
@@ -17,29 +22,24 @@ class Triangle(ABC):
                 f"Стороны должны быть > 0: Side1={self.Side1}, Side2={self.Side2}"
             )
 
-        if not (0 < self.Angle_12 < 180):
+        if not (0 < self.Angle_12 <= 90):
             raise ValueError(
-                f"Угол Angle_12 должен быть в (0°, 180°): {self.Angle_12}°"
+                f"Угол между сторонами должен быть в (0°, 90°): {self.Angle_12}°"
             )
 
-        side3 = self.Side3
-        if (
-            self.Side1 + self.Side2 <= side3
-            or self.Side1 + side3 <= self.Side2
-            or self.Side2 + side3 <= self.Side1
-        ):
+        side3: float = self.Side3
+        sides: list[float] = sorted((self.Side1, self.Side2, side3))
+        if sides[0] + sides[1] <= sides[2]:
             raise ValueError(
                 f"Неравенство треугольника нарушено: {self.Side1}, {self.Side2}, {side3}"
             )
 
     @property
     def Side3(self) -> float:
-        angle_rad = radians(self.Angle_12)
-        side3_sq = (
+        angle_rad: float = radians(self.Angle_12)
+        side3_sq: float = (
             self.Side1**2 + self.Side2**2 - 2 * self.Side1 * self.Side2 * cos(angle_rad)
         )
-        if side3_sq < 0:
-            raise ValueError("Side3^2 < 0 — невозможно!")
         return side3_sq**0.5
 
     @property
@@ -63,11 +63,11 @@ Triangle:
 """.strip()
 
 
+@dataclass
 class RightTriangle(Triangle):
     """Прямоугольный: угол между Side1 и Side2 = 90°"""
 
-    def __init__(self, leg1: float, leg2: float) -> None:
-        super().__init__(leg1, leg2, 90.0)
+    Angle_12: float = field(init=False, default=90)
 
     @property
     def area(self) -> float:
@@ -78,15 +78,16 @@ class RightTriangle(Triangle):
         return self.Side1 + self.Side2 + self.Side3
 
     def __str__(self) -> str:
-        return super().__str__() + "\nType: Right"
+        return super().__str__() + "\n    Type: Right"
 
 
+@dataclass
 class IsoscelesTriangle(Triangle):
     """Равнобедренный: Side2 = боковая сторона, угол между основанием и боковой."""
 
-    def __init__(self, base: float, leg: float, angle_base_leg: float) -> None:
-        # angle_base_leg — угол между основанием (base) и боковой (leg)
-        super().__init__(base, leg, angle_base_leg)
+    @property
+    def Side3(self) -> float:
+        return self.Side2
 
     @property
     def area(self) -> float:
@@ -97,14 +98,23 @@ class IsoscelesTriangle(Triangle):
         return self.Side1 + self.Side2 + self.Side3
 
     def __str__(self) -> str:
-        return super().__str__() + "\nType: Isosceles"
+        return super().__str__() + "\n    Type: Isosceles"
 
 
+@dataclass
 class EquilateralTriangle(Triangle):
     """Равносторонний: все стороны равны, угол = 60°."""
 
-    def __init__(self, side: float) -> None:
-        super().__init__(side, side, 60.0)
+    Side1: float = field(init=False)
+    Side2: float = field(init=False)
+    Angle_12: float = field(init=False)
+    Side: float
+
+    def __post_init__(self) -> None:
+        self.Side1 = self.Side
+        self.Side2 = self.Side
+        self.Angle_12 = 60
+        self._validate_triangle()
 
     @property
     def area(self) -> float:
@@ -112,23 +122,53 @@ class EquilateralTriangle(Triangle):
 
     @property
     def perimeter(self) -> float:
-        return 3 * self.Side1
+        return 3 * self.Side
 
     def __str__(self) -> str:
-        return super().__str__() + "\nType: Equilateral"
+        return super().__str__() + "\n    Type: Equilateral"
+
+
+def generate_RightTriangle() -> RightTriangle:
+    while True:
+        try:
+            triangle = RightTriangle(Side1=r.randint(1, 100), Side2=r.randint(1, 100))
+        except ValueError:
+            continue
+        else:
+            return triangle
+
+
+def generate_IsoscelesTriangle() -> IsoscelesTriangle:
+    while True:
+        try:
+            triangle = IsoscelesTriangle(
+                Side1=r.randint(1, 100),
+                Side2=r.randint(1, 100),
+                Angle_12=r.randint(1, 90),
+            )
+        except ValueError:
+            continue
+        else:
+            return triangle
+
+
+def generate_EquilateralTriangle() -> EquilateralTriangle:
+    while True:
+        try:
+            triangle = EquilateralTriangle(Side=r.randint(1, 100))
+        except ValueError:
+            continue
+        else:
+            return triangle
 
 
 def main() -> None:
-    TriangleFactories: dict[int, Callable[[], Triangle]] = {
-        1: lambda: RightTriangle(leg1=r.randint(1, 100), leg2=r.randint(1, 100)),
-        2: lambda: IsoscelesTriangle(
-            base=r.randint(1, 100),
-            leg=r.randint(1, 100),
-            angle_base_leg=r.randint(1, 90),
-        ),
-        3: lambda: EquilateralTriangle(side=r.randint(1, 100)),
+    TriangleFactories: dict[int, TriangleFactory] = {
+        1: generate_RightTriangle,
+        2: generate_IsoscelesTriangle,
+        3: generate_EquilateralTriangle,
     }
-    TrianglesAmount: int = r.randint(1, 10)
+    TrianglesAmount: int = r.randint(5, 10)
     print(f"Initializing {TrianglesAmount} triangles of {len(TriangleFactories)} types")
     TrianglesList: list[Triangle] = [
         TriangleFactories[r.randint(1, len(TriangleFactories))]()
