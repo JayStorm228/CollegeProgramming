@@ -3,7 +3,7 @@ import random as r
 from pathlib import Path
 
 # Конфигурации
-file_name = "LabData.json"
+file_name = "LabData.txt"
 CWD: Path = Path(__file__).resolve().parent
 file_path: Path = CWD / file_name
 encoding = "utf-8"

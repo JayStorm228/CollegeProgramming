@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Any
 
 # Шаблон "дд.мм.гггг"
 DATE_PATTERN: re.Pattern[str] = re.compile(
@@ -18,7 +18,7 @@ encoding = "utf-8"
 
 
 # Для валидации данных
-def Validate_Price(value) -> None:
+def Validate_Price(value: Any) -> None:
     if not (isinstance(value, int | float) and value > 0):
         raise ValueError(
             f"Price must be a positive float or int value! Given: {value!r} of type {type(value)}"
@@ -69,7 +69,7 @@ Software:
     Made by {self.Manufacturer}
         """.strip()
 
-    def match_InstallDate(self, date) -> bool:
+    def match_InstallDate(self, date: date | str) -> bool:
         return True
 
 
