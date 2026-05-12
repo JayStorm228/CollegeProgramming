@@ -3,12 +3,13 @@ import random as r
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, TypeAlias
 
 FileName = "Data.json"
 CWD: Path = Path(__file__).resolve().parent
 DataPath: Path = CWD / FileName
 encoding = "utf-8"
+VehicleFactory: TypeAlias = Callable[[dict[str, list[str]]], "Vehicle"]
 
 
 @dataclass
@@ -31,7 +32,7 @@ Vehicle:
 """.strip()
 
     @abstractmethod
-    def match_carrying(self, carrying) -> bool: ...
+    def match_carrying(self, carrying: float) -> bool: ...
 
 
 class Auto(Vehicle):
@@ -43,7 +44,7 @@ class Auto(Vehicle):
     def __str__(self) -> str:
         return super().__str__().replace("Vehicle", "Auto")
 
-    def match_carrying(self, carrying) -> bool:
+    def match_carrying(self, carrying: float) -> bool:
         return self.carrying >= carrying
 
 
@@ -63,7 +64,7 @@ class Motorcycle(Vehicle):
             .replace(f"{self.carrying_capacity}", f"{self.carrying}")
         )
 
-    def match_carrying(self, carrying) -> bool:
+    def match_carrying(self, carrying: float) -> bool:
         return self.carrying >= carrying
 
 
@@ -85,13 +86,13 @@ class Truck(Vehicle):
             .replace(f"{self.carrying_capacity}", f"{self.carrying}")
         )
 
-    def match_carrying(self, carrying) -> bool:
+    def match_carrying(self, carrying: float) -> bool:
         return self.carrying >= carrying
 
 
 def main() -> None:
     data: dict[str, list[str]] = json.loads(DataPath.read_text(encoding=encoding))
-    VehiclesFactories: dict[int, Callable[[dict[str, list[str]]], Vehicle]] = {
+    VehiclesFactories: dict[int, VehicleFactory] = {
         1: lambda data: Auto(
             mark=r.choice(data["Mark"]),
             ID=r.choice(data["CarNumber"]),

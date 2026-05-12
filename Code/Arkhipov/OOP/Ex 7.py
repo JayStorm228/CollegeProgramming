@@ -15,16 +15,19 @@ FileName = "Data.json"
 CWD: Path = Path(__file__).resolve().parent
 DataPath: Path = CWD / FileName
 encoding = "utf-8"
+type PhoneFactory = Callable[[dict[str, list[str]]], Phone]
+Date_Pattern = re.compile(r"^(0[1-9]|[12]\d|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$")
 
 
-def validate_date(date_str: str) -> bool:
+def validate_date(date_str: str) -> None:
     if not Date_Pattern.match(date_str):
-        return False
+        raise ValueError(
+            f"Invalid date format! required: dd.mm.yyyy. Given: {date_str!r}"
+        )
     try:
         datetime.strptime(date_str, "%d.%m.%Y")
-        return True
     except ValueError:
-        return False
+        raise ValueError(f"Invalid calendar date! Given: {date_str!r}")
 
 
 @dataclass(frozen=True)
@@ -36,7 +39,7 @@ class Phone(ABC):
     @abstractmethod
     def __str__(self) -> str: ...
     @abstractmethod
-    def matches_Name(self, name) -> bool: ...
+    def matches_Name(self, name: str) -> bool: ...
 
 
 @dataclass(frozen=True)
@@ -48,7 +51,7 @@ Address: {self.Address}
 Phone Number: {self.PhoneNumber}
 """.strip()
 
-    def matches_Name(self, name) -> bool:
+    def matches_Name(self, name: str) -> bool:
         return self.Name == name
 
 
@@ -64,7 +67,7 @@ Phone Number: {self.PhoneNumber}
 Manager: {self.Contact}
 """.strip()
 
-    def matches_Name(self, name) -> bool:
+    def matches_Name(self, name: str) -> bool:
         return self.Contact == name
 
 
@@ -73,10 +76,7 @@ class FriendPhone(Phone):
     DateOfBirth: str
 
     def __post_init__(self) -> None:
-        if not validate_date(self.DateOfBirth):
-            raise ValueError(
-                f"Date of Birth must be a correct date type. Given: {self.DateOfBirth}"
-            )
+        validate_date(self.DateOfBirth)
 
     def __str__(self) -> str:
         return f"""
@@ -86,13 +86,13 @@ Address: {self.Address}
 Phone Number: {self.PhoneNumber}
 """.strip()
 
-    def matches_Name(self, name) -> bool:
+    def matches_Name(self, name: str) -> bool:
         return self.Name == name
 
 
 def main() -> None:
     data: dict[str, list[str]] = json.loads(DataPath.read_text(encoding=encoding))
-    PhoneFactories: dict[int, Callable[[dict[str, list[str]]], Phone]] = {
+    PhoneFactories: dict[int, PhoneFactory] = {
         1: lambda data: PersonalPhone(
             Name=r.choice(data["LastName"]),
             Address=r.choice(data["Address"]),
@@ -111,7 +111,8 @@ def main() -> None:
             DateOfBirth=r.choice(data["Date"]),
         ),
     }
-    PhonesAmount: int = r.randint(1, 10)
+    PhonesAmount: int = r.randint(5, 20)
+    print(f"Initializing {PhonesAmount} contacts of {len(PhoneFactories)} types")
     PhonesList: list[Phone] = [
         PhoneFactories[r.randint(1, len(PhoneFactories))](data)
         for _ in range(PhonesAmount)

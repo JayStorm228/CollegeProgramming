@@ -3,20 +3,27 @@ import random as r
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Any, Callable
 
 FileName = "Data.json"
 CWD: Path = Path(__file__).resolve().parent
 DataPath: Path = CWD / FileName
 encoding = "utf-8"
+type ItemFactory = Callable[[dict[str, list[str]]], Item]
 
 
-def ValidateAge(value) -> bool:
-    return isinstance(value, int) and value > 0
+def ValidateAge(value: Any) -> None:
+    if not isinstance(value, int):
+        raise TypeError(f"Age must be an integer! Given: {type(value)!r}")
+    if not value > 0:
+        raise ValueError(f"Age must be greater than zero! Given: {value!r}")
 
 
-def ValidatePrice(price) -> bool:
-    return (isinstance(price, (float, int))) and price > 0
+def ValidatePrice(price: Any) -> None:
+    if not isinstance(price, (float, int)):
+        raise TypeError(f"Price must be a float or int value! Given: {type(price)}")
+    if not price > 0:
+        raise ValueError(f"Price must be greater than zero! Given: {price!r}")
 
 
 @dataclass
@@ -31,15 +38,12 @@ class Item(ABC):
     def __str__(self) -> str:
         return f"""
 {self.Title}:
-{self.Price=}, can be used from {self.Age} y.o.
+Price is {self.Price}$, can be used from {self.Age} y.o.
         """.strip()
 
     def __post_init__(self) -> None:
-        if not ValidateAge(self.Age):
-            raise ValueError(f"Given age: {self.Age} must be an integer!")
-
-        if not ValidatePrice(self.Price):
-            raise ValueError(f"Given price: {self.Price} must be bigger than 0!")
+        ValidatePrice(self.Price)
+        ValidateAge(self.Age)
 
 
 @dataclass
@@ -51,7 +55,7 @@ class Toy(Item):
         return self.Age <= Age
 
     def __str__(self) -> str:
-        return super().__str__() + f"\n{self.Manufacturer=}, made of {self.Material}"
+        return super().__str__() + f"\nmade of {self.Material} by {self.Manufacturer!r}"
 
 
 @dataclass
@@ -90,7 +94,7 @@ class SportsInventory(Item):
 
 def main() -> None:
     data: dict[str, list[str]] = json.loads(DataPath.read_text(encoding=encoding))
-    ItemsFactories: dict[int, Callable[[dict[str, list[str]]], Item]] = {
+    ItemsFactories: dict[int, ItemFactory] = {
         1: lambda data: Toy(
             Title=r.choice(data["Toy"]),
             Price=r.randint(10, 100),
@@ -99,10 +103,10 @@ def main() -> None:
             Material=r.choice(data["Material"]),
         ),
         2: lambda data: Book(
-            Title=r.choice(data["Title"]),
+            Title=r.choice(data["Titles"]),
             Price=r.randint(150, 400),
             Age=r.randint(12, 20),
-            Edition=r.choice(data["Edition"]),
+            Edition=r.choice(data["Publishers"]),
             Author=r.choice(data["Author"]),
         ),
         3: lambda data: SportsInventory(
@@ -112,7 +116,7 @@ def main() -> None:
             Manufacturer=r.choice(data["Manufacturer"]),
         ),
     }
-    ItemsAmount: int = r.randint(1, 10)
+    ItemsAmount: int = r.randint(5, 15)
     print(f"Initializing {ItemsAmount} items of {len(ItemsFactories)} types")
     ItemsList: list[Item] = [
         ItemsFactories[r.randint(1, len(ItemsFactories))](data)
